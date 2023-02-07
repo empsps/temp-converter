@@ -55,6 +55,7 @@ fn main() {
             Err(_) => {
                 print!("Invalid input, choose from: C, F, K: ");
                 stdout().flush().unwrap();
+                continue;
             }
         }
     }
@@ -81,6 +82,7 @@ fn main() {
             Err(_) => {
                 print!("Invalid input, choose to: C, F, K: ");
                 stdout().flush().unwrap();
+                continue;
             }
         }
     }
