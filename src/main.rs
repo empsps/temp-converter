@@ -143,18 +143,15 @@ fn convert_temp(temp: &i32, from: &Unit, to: &Unit) -> i32 {
 fn get_input() -> String {
     let mut buffer = String::new();
     stdin().read_line(&mut buffer).unwrap();
-
     buffer.trim().to_owned()
 }
 
 fn input_parse_unit() -> Result<Unit, ()> {
     let input = get_input();
-
     input.parse::<Unit>()
 }
 
 fn input_parse_i32() -> Result<i32, ParseIntError> {
     let input = get_input();
-
     input.parse::<i32>()
 }
