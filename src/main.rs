@@ -25,10 +25,11 @@ impl FromStr for Unit {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "c" => Ok(Unit::CELSIUS),
-            "celsius" => Ok(Unit::CELSIUS),
             "f" => Ok(Unit::FAHRENHEIT),
-            "fahrenheit" => Ok(Unit::FAHRENHEIT),
             "k" => Ok(Unit::KELVIN),
+
+            "celsius" => Ok(Unit::CELSIUS),
+            "fahrenheit" => Ok(Unit::FAHRENHEIT),
             "kelvin" => Ok(Unit::KELVIN),
             _ => Err(()),
         }
