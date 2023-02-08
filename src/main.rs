@@ -1,6 +1,5 @@
 use std::fmt;
 use std::io::{stdout, Write};
-use std::num::ParseIntError;
 use std::{io::stdin, str::FromStr};
 
 #[derive(PartialEq, Eq)]
@@ -41,16 +40,12 @@ fn main() {
     print!("\nInsert the unit you want to convert from (C, F, K): ");
     stdout().flush().unwrap();
 
-    #[allow(unused_mut)]
-    let mut unit_from: Unit;
-
-    loop {
+    let unit_from = loop {
         let result = input_parse_unit();
         match result {
             Ok(uf) => {
-                unit_from = uf;
-                println!("Converting from: {}", unit_from);
-                break;
+                println!("Converting from: {}", uf);
+                break uf;
             }
             Err(_) => {
                 print!("Invalid input, choose from: C, F, K: ");
@@ -58,26 +53,22 @@ fn main() {
                 continue;
             }
         }
-    }
+    };
 
     print!("\nNow, the unit you want to convert to: ");
     stdout().flush().unwrap();
 
-    #[allow(unused_mut)]
-    let mut unit_to: Unit;
-
-    loop {
+    let unit_to = loop {
         let result = input_parse_unit();
         match result {
             Ok(ut) => {
-                unit_to = ut;
-                if unit_to == unit_from {
+                if ut == unit_from {
                     print!("You cannot convert to the same unit, choose a different one: ");
                     stdout().flush().unwrap();
                     continue;
                 }
-                println!("Converting degrees {} to {}", unit_from, unit_to);
-                break;
+                println!("Converting degrees {} to {}", unit_from, ut);
+                break ut;
             }
             Err(_) => {
                 print!("Invalid input, choose to: C, F, K: ");
@@ -85,28 +76,22 @@ fn main() {
                 continue;
             }
         }
-    }
+    };
 
     print!("Now, enter the value you want to convert: ");
     stdout().flush().unwrap();
 
-    #[allow(unused_mut)]
-    let mut value: i32;
-
-    loop {
+    let value = loop {
         let result = input_parse_i32();
         match result {
-            Ok(temp) => {
-                value = temp;
-                break;
-            }
+            Ok(temp) => break temp,
             Err(_) => {
                 print!("That's not a valid temperature, try again: ");
                 stdout().flush().unwrap();
                 continue;
             }
         }
-    }
+    };
 
     let converted = convert_temp(&value, &unit_from, &unit_to);
     println!(
@@ -140,18 +125,21 @@ fn convert_temp(temp: &i32, from: &Unit, to: &Unit) -> i32 {
     converted
 }
 
-fn get_input() -> String {
+fn read_input() -> String {
     let mut buffer = String::new();
     stdin().read_line(&mut buffer).unwrap();
     buffer.trim().to_owned()
 }
 
 fn input_parse_unit() -> Result<Unit, ()> {
-    let input = get_input();
+    let input = read_input();
     input.parse::<Unit>()
 }
 
-fn input_parse_i32() -> Result<i32, ParseIntError> {
-    let input = get_input();
-    input.parse::<i32>()
+fn input_parse_i32() -> Result<i32, ()> {
+    let input = read_input();
+    match input.parse::<i32>() {
+        Ok(temp) => Ok(temp),
+        Err(_) => Err(()),
+    }
 }
