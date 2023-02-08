@@ -40,58 +40,26 @@ fn main() {
     print!("\nInsert the unit you want to convert from (C, F, K): ");
     stdout().flush().unwrap();
 
-    let unit_from = loop {
-        let result = input_parse_unit();
-        match result {
-            Ok(uf) => {
-                println!("Converting from: {}", uf);
-                break uf;
-            }
-            Err(_) => {
-                print!("Invalid input, choose from: C, F, K: ");
-                stdout().flush().unwrap();
-                continue;
-            }
-        }
-    };
+    let unit_from: Unit = input_parse_unit();
 
     print!("\nNow, the unit you want to convert to: ");
     stdout().flush().unwrap();
 
-    let unit_to = loop {
+    let unit_to: Unit = loop {
         let result = input_parse_unit();
-        match result {
-            Ok(ut) => {
-                if ut == unit_from {
-                    print!("You cannot convert to the same unit, choose a different one: ");
-                    stdout().flush().unwrap();
-                    continue;
-                }
-                println!("Converting degrees {} to {}", unit_from, ut);
-                break ut;
-            }
-            Err(_) => {
-                print!("Invalid input, choose to: C, F, K: ");
-                stdout().flush().unwrap();
-                continue;
-            }
+        if result == unit_from {
+            print!("You cannot convert to the same unit, choose a different one: ");
+            stdout().flush().unwrap();
+            continue;
+        } else {
+            break result;
         }
     };
 
     print!("Now, enter the value you want to convert: ");
     stdout().flush().unwrap();
 
-    let value = loop {
-        let result = input_parse_i32();
-        match result {
-            Ok(temp) => break temp,
-            Err(_) => {
-                print!("That's not a valid temperature, try again: ");
-                stdout().flush().unwrap();
-                continue;
-            }
-        }
-    };
+    let value = input_parse_i32();
 
     let converted = convert_temp(&value, &unit_from, &unit_to);
     println!(
@@ -101,28 +69,23 @@ fn main() {
 }
 
 fn convert_temp(temp: &i32, from: &Unit, to: &Unit) -> i32 {
-    #[allow(unused_mut)]
-    let mut converted: i32;
-
     match from {
         Unit::CELSIUS => match to {
-            Unit::FAHRENHEIT => converted = (temp * 9) / 5 + 32,
-            Unit::KELVIN => converted = temp + 273,
-            _ => converted = 0,
+            Unit::FAHRENHEIT => (temp * 9) / 5 + 32,
+            Unit::KELVIN => temp + 273,
+            _ => 0,
         },
         Unit::FAHRENHEIT => match to {
-            Unit::CELSIUS => converted = (temp - 32) * 5 / 9,
-            Unit::KELVIN => converted = (temp - 32) * 5 / 9 + 273,
-            _ => converted = 0,
+            Unit::CELSIUS => (temp - 32) * 5 / 9,
+            Unit::KELVIN => (temp - 32) * 5 / 9 + 273,
+            _ => 0,
         },
         Unit::KELVIN => match to {
-            Unit::CELSIUS => converted = temp - 273,
-            Unit::FAHRENHEIT => converted = (temp - 273) * 9 / 5 + 32,
-            _ => converted = 0,
+            Unit::CELSIUS => temp - 273,
+            Unit::FAHRENHEIT => (temp - 273) * 9 / 5 + 32,
+            _ => 0,
         },
-    };
-
-    converted
+    }
 }
 
 fn read_input() -> String {
@@ -131,15 +94,30 @@ fn read_input() -> String {
     buffer.trim().to_owned()
 }
 
-fn input_parse_unit() -> Result<Unit, ()> {
-    let input = read_input();
-    input.parse::<Unit>()
+fn input_parse_unit() -> Unit {
+    loop {
+        let input = read_input();
+        match input.parse::<Unit>() {
+            Ok(unit) => break unit,
+            Err(_) => {
+                print!("Invalid input, choose from: C, F, K: ");
+                stdout().flush().unwrap();
+                continue;
+            }
+        }
+    }
 }
 
-fn input_parse_i32() -> Result<i32, ()> {
-    let input = read_input();
-    match input.parse::<i32>() {
-        Ok(temp) => Ok(temp),
-        Err(_) => Err(()),
+fn input_parse_i32() -> i32 {
+    loop {
+        let input = read_input();
+        match input.parse::<i32>() {
+            Ok(temp) => break temp,
+            Err(_) => {
+                print!("That's not a valid temperature, try again: ");
+                stdout().flush().unwrap();
+                continue;
+            }
+        };
     }
 }
